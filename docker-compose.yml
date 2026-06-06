@@ -1,0 +1,38 @@
+# Example docker-compose.yml
+# This shows how to run the link shortener alongside your Immich stack.
+#
+# Make sure to update:
+#   - IMMICH_API_KEY with your actual API key
+#   - IPP_BASE_URL with your Immich Public Proxy public URL
+#   - SHORT_URL_DOMAIN with the domain you'll use for short links
+
+services:
+  link-shortener:
+    image: ghcr.io/YOUR_GITHUB_USERNAME/link-shortener:latest
+    container_name: link-shortener
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    environment:
+      # Required: Internal URL of your Immich instance
+      - IMMICH_URL=http://immich-server:2283
+      # Required: Your Immich API key (Administration → API Keys)
+      - IMMICH_API_KEY=your-api-key-here
+      # Required: Public URL of your Immich Public Proxy
+      - IPP_BASE_URL=https://gallery.whooslizi.dev
+      # Required: Public domain for short links
+      - SHORT_URL_DOMAIN=https://s.whooslizi.dev
+      # Optional: How often to poll Immich for new shared links (default: 60s)
+      # - POLL_INTERVAL=60s
+      # Optional: Length of generated short codes (default: 8)
+      # - SHORT_CODE_LENGTH=8
+      # Optional: Password for admin UI (default: open)
+      # - ADMIN_PASSWORD=your-admin-password
+    volumes:
+      - link-data:/data
+    # If running in the same Docker network as Immich:
+    # networks:
+    #   - immich-network
+
+volumes:
+  link-data:

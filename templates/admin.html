@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Shortener — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🔗</div>
+                <h1>Link Shortener <span>Admin</span></h1>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value">{{ len .Links }}</div>
+                    <div class="stat-label">Total Links</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="active-count">0</div>
+                    <div class="stat-label">Active</div>
+                </div>
+            </div>
+        </header>
+
+        {{ if .Links }}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Short URL</th>
+                        <th>Target</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ range .Links }}
+                    <tr>
+                        <td>
+                            <div class="link-cell">
+                                <a href="{{ shortURL .ShortCode $.ShortURLDomain }}" target="_blank" rel="noopener" class="short-url">
+                                    {{ shortURL .ShortCode $.ShortURLDomain }}
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="target-url" title="{{ .IPPURL }}">{{ .IPPURL }}</div>
+                        </td>
+                        <td>
+                            {{ if isExpired .ExpiresAt }}
+                                <span class="badge badge-expired">Expired</span>
+                            {{ else if .ExpiresAt }}
+                                <span class="badge badge-expiring">{{ formatExpiry .ExpiresAt }}</span>
+                            {{ else }}
+                                <span class="badge badge-never">Never expires</span>
+                            {{ end }}
+                        </td>
+                        <td>
+                            <span class="date">{{ formatTime .CreatedAt }}</span>
+                        </td>
+                        <td>
+                            <button class="copy-btn" onclick="copyURL(this, '{{ shortURL .ShortCode $.ShortURLDomain }}')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                Copy
+                            </button>
+                        </td>
+                    </tr>
+                    {{ end }}
+                </tbody>
+            </table>
+        </div>
+        {{ else }}
+        <div class="table-wrapper">
+            <div class="empty-state">
+                <div class="empty-state-icon">🔗</div>
+                <h2>No short links yet</h2>
+                <p>Create a shared link in Immich and the poller will automatically pick it up.</p>
+            </div>
+        </div>
+        {{ end }}
+    </div>
+
+    <script src="/static/admin.js"></script>
+</body>
+</html>
