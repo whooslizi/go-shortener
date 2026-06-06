@@ -1,4 +1,4 @@
-module github.com/hodaka/link-shortener
+module github.com/whooslizi/go-shortener
 
 go 1.23.0
 
